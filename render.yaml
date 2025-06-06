@@ -1,0 +1,54 @@
+services:
+  - type: web
+    name: krn
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn bot:flask_app --bind 0.0.0.0:10000 --worker-class gevent
+    envVars:
+      - key: BOT_TOKEN
+        fromGroup: false
+        required: true
+      - key: MONGO_URI
+        fromGroup: false
+        required: true
+      - key: SHORTNER_API
+        fromGroup: false
+        required: true
+      - key: FLASK_URL
+        fromGroup: false
+        required: true
+      - key: HOW_TO_VERIFY_URL
+        fromGroup: false
+        required: false
+      - key: LIKE_API_URL
+        fromGroup: false
+        required: false
+    plan: free
+    numInstances: 1
+
+  - type: worker
+    name: likebot-telegram
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
+    envVars:
+      - key: BOT_TOKEN
+        fromGroup: true
+        required: true
+      - key: MONGO_URI
+        fromGroup: true
+        required: true
+      - key: SHORTNER_API
+        fromGroup: true
+        required: true
+      - key: FLASK_URL
+        fromGroup: true
+        required: true
+      - key: HOW_TO_VERIFY_URL
+        fromGroup: true
+        required: false
+      - key: LIKE_API_URL
+        fromGroup: true
+        required: false
+    plan: free
+    numInstances: 1
